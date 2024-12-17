@@ -1,0 +1,79 @@
+:root {
+  /* Custom Colors from configFactory */
+  --color-orange-100: #fff4ef;
+  --color-orange-200: #feba99;
+  --color-orange-300: #fd864d;
+  --color-orange-350: #ec6a2b;
+  --color-orange-400: #fc5200;
+  --color-orange-500: #b03900;
+  --color-orange-600: #652100;
+  --color-orange-700: #59301d;
+
+  --color-beige-100: #fffdfb;
+  --color-beige-200: #fff7f1;
+  --color-beige-300: #fff0e6;
+  --color-beige-400: #ffeadb;
+  --color-beige-500: #ffcca8;
+
+  --color-white: #ffffff;
+
+  --color-black-100: #13222a;
+  --color-black-200: #0d171c;
+  --color-black-300: #020404;
+
+  --color-gray-100: #cfd7d6;
+  --color-gray-200: #b4c0be;
+  --color-gray-300: #98a9a7;
+  --color-gray-400: #7c928f;
+  --color-gray-500: #546461;
+  --color-gray-600: #384341;
+
+  --color-silver-100: #fdfdfd;
+  --color-silver-200: #f7f9f9;
+  --color-silver-300: #f2f4f4;
+  --color-silver-400: #e7e9e9;
+  --color-silver-500: #c7cfce;
+
+  --color-blue-100: #e5f2ff;
+  --color-blue-200: #7dc0ff;
+  --color-blue-300: #0081fa;
+  --color-blue-400: #005aaf;
+  --color-blue-500: #00417d;
+  --color-blue-600: #0d3352;
+
+  --color-navy-100: #5c95b2;
+  --color-navy-200: #467b95;
+  --color-navy-300: #365e72;
+  --color-navy-400: #254250;
+  --color-navy-450: #182c35;
+  --color-navy-500: #15252d;
+
+  --color-red-100: #fff5f5;
+  --color-red-200: #feb2b2;
+  --color-red-250: #e06f6b;
+  --color-red-300: #db4d48;
+  --color-red-400: #bf2e2a;
+  --color-red-500: #822727;
+  --color-red-600: #4d282c;
+
+  --color-yellow-100: #fffbe5;
+  --color-yellow-200: #ffe97d;
+  --color-yellow-300: #fad000;
+  --color-yellow-400: #af9200;
+  --color-yellow-500: #7d6800;
+  --color-yellow-600: #283022;
+
+  --color-green-100: #f0fff4;
+  --color-green-200: #9ae6b4;
+  --color-green-300: #00fab3;
+  --color-green-400: #25855a;
+  --color-green-500: #22543d;
+  --color-green-600: #183130;
+
+  --color-purple-100: #f3e0ff;
+  --color-purple-200: #c363ff;
+  --color-purple-300: #7b00c7;
+  --color-purple-400: #56008b;
+  --color-purple-500: #310050;
+  --color-purple-600: #321859;
+}

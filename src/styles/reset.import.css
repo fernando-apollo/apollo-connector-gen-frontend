@@ -1,0 +1,90 @@
+@tailwind base;
+@layer base {
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tap-highlight-color: transparent;
+    /* For some Androids */
+  }
+
+  b {
+    @apply font-semibold;
+  }
+
+  html,
+  button,
+  input,
+  textarea,
+  select {
+    outline: none;
+    @apply antialiased;
+  }
+
+  button:focus + input:focus + textarea:focus + select:focus {
+    outline: none;
+  }
+
+  button:focus-visible + input:focus-visible + textarea:focus-visible {
+    outline: auto 1px;
+  }
+
+  input {
+    @apply h-10;
+  }
+
+  /* Carried over from base.import.less. Hopefully we can delete/simplify these rules in due time... */
+  img,
+  svg,
+  video,
+  canvas,
+  audio,
+  iframe,
+  embed,
+  object {
+    vertical-align: unset;
+    @apply inline;
+  }
+
+  ol {
+    padding-inline-start: 40px;
+    @apply list-decimal;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-normal m-0 p-0;
+  }
+
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  h4 {
+    @apply text-lg;
+  }
+
+  em {
+    @apply font-semibold not-italic;
+  }
+
+  /* Tailwind's css rule for [hidden] has very low specificity and is overridden
+   By any classes that assign to `display` */
+  [hidden] {
+    @apply !hidden;
+  }
+
+  .vector-effect-non-scaling-stroke * {
+    vector-effect: non-scaling-stroke;
+  }
+}
