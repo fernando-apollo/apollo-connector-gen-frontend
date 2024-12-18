@@ -2,7 +2,7 @@ import FileUpload from '@components/fileUpload/FileUpload';
 import { GlobalHeader } from '@components/globalHeader/GlobalHeader';
 import { Panel } from '@components/panel/Panel';
 import { Allotment } from 'allotment';
-import { useAppState } from './hooks/usePlaygroundState';
+import { useAppState } from './hooks/useAppState';
 import {
   MONACO_READONLY_OPTIONS,
   MonacoEditorContainer,
@@ -31,6 +31,7 @@ function App() {
     onGenerateAnswers,
     generated,
     setGenerated,
+    checkCheckedKeys,
   } = useAppState();
   const treeRef = useRef<any>();
 
@@ -82,7 +83,7 @@ function App() {
               <Button
                 size='sm'
                 variant='primary'
-                disabled={!uploadInfo || checkedKeys?.length == 0}
+                disabled={!uploadInfo || !checkCheckedKeys(checkedKeys)}
                 className='ml-2'
                 onClick={async () => {
                   const generated = await onGenerateAnswers();
@@ -105,7 +106,7 @@ function App() {
                   // debugger;
                 }}
                 icon={(props: TreeNodeProps) => {
-                  console.log('props', props);
+                  // console.log('props', props);
                   return getIconFor(props);
                 }}
               />

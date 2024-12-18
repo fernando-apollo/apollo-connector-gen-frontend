@@ -1,50 +1,35 @@
-# React + TypeScript + Vite
+# Apollo Connector Gen - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This app needs to be run along [Apollo Connector Generator](https://github.com/fernando-apollo/apollo-connector-gen). Head over to <https://github.com/fernando-apollo/apollo-connector-gen> and clone the repo.
 
-Currently, two official plugins are available:
+Then, create a `docker-compose.yml` file:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```yaml
+name: 'apollo-connector-gen'
 
-## Expanding the ESLint configuration
+services:
+  generator:
+    container_name: generator
+    image: apollographql/apollo-connector-gen
+    build:
+      context: ./apollo-connector-gen
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+  frontend:
+    container_name: frontend
+    image: apollographql/apollo-connector-gen-frontend
+    build:
+      context: ./apollo-connector-gen-frontend
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    depends_on:
+      - generator
+    command: npm run dev --port
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+And execute `docker compose up` to run both projects.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react';
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-});
-```
+Once the containers have started, head over to <http://localhost:3000/> and upload your OAS / Swagger spec.

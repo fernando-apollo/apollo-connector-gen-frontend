@@ -1,7 +1,5 @@
 import { Key, useState } from 'react';
 
-import { useEditorModel } from './useEditorModel';
-import { useMonacoEditor } from './useMonacoEditor';
 import { Answers, Node, ResponseItem, TreeData, UploadInfo } from 'types/utils';
 import { CheckInfo } from 'rc-tree/lib/Tree';
 
@@ -140,9 +138,14 @@ export const useAppState = () => {
 
     const isArray =
       item.id.startsWith('array:') || item.id.startsWith('prop:array:');
+
     if (isArray) {
       console.log('isArray', item.id);
       return '[' + item.id.replace('prop:array:', '') + ']';
+    }
+
+    if (item.id === 'res:r') {
+      return 'Response';
     }
 
     return item.id;
@@ -155,6 +158,7 @@ export const useAppState = () => {
       title: formatTitle(item),
       key: item.path, // (root?.key || '<root>') + '>' + item.id,
       isLeaf: isScalar,
+      // disableCheckbox: !isScalar,
       parent: root,
     };
 
@@ -184,6 +188,20 @@ export const useAppState = () => {
     }
   };
 
+  const checkCheckedKeys = (checkedKeys: Key[]) => {
+    if (checkCheckedKeys.length === 0) return false;
+
+    for (const key of checkedKeys) {
+      const node = findNode(treeData, key as string);
+      if (node && node.isLeaf) {
+        return true;
+      }
+    }
+
+    // debugger;
+    return false;
+  };
+
   return {
     uploadInfo,
     setUploadInfo,
@@ -196,5 +214,6 @@ export const useAppState = () => {
     checkedKeys,
     generateAnswers,
     onGenerateAnswers,
+    checkCheckedKeys,
   };
 };
