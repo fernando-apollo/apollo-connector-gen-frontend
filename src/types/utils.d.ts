@@ -23,7 +23,8 @@ export type Node = {
   isLeaf: boolean;
   children?: Node[];
   parent?: Node;
-  // checkable?: boolean;
+  disableCheckbox?: boolean;
+  checked?: boolean;
 };
 
 export type Answers = { [key: string]: string };

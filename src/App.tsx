@@ -29,7 +29,6 @@ function App() {
     onCheck,
     checkedKeys,
     onGenerateAnswers,
-    generated,
     setGenerated,
     checkCheckedKeys,
   } = useAppState();
@@ -65,13 +64,13 @@ function App() {
                 <FileUpload
                   onUpload={(info: UploadInfo): void => {
                     setUploadInfo(info);
-                    console.log('File uploaded');
                     setTreeData([]);
 
                     const data = info.paths.map((path) => ({
                       title: path,
                       key: 'get:' + path,
                       isLeaf: false,
+                      disableCheckbox: true,
                     }));
 
                     setTreeData(data);
@@ -83,7 +82,9 @@ function App() {
               <Button
                 size='sm'
                 variant='primary'
-                disabled={!uploadInfo || !checkCheckedKeys(checkedKeys)}
+                disabled={
+                  !uploadInfo || !checkCheckedKeys(checkedKeys?.checked)
+                }
                 className='ml-2'
                 onClick={async () => {
                   const generated = await onGenerateAnswers();
@@ -98,17 +99,12 @@ function App() {
                 ref={treeRef}
                 treeData={treeData}
                 checkable
+                checkedKeys={checkedKeys}
                 selectable={false}
                 loadData={onLoadData}
                 onCheck={onCheck}
-                onExpand={(expandedKeys) => {
-                  console.log('expandedKeys', treeRef);
-                  // debugger;
-                }}
-                icon={(props: TreeNodeProps) => {
-                  // console.log('props', props);
-                  return getIconFor(props);
-                }}
+                checkStrictly={true}
+                icon={(props: TreeNodeProps) => getIconFor(props)}
               />
             )}
           </Panel>

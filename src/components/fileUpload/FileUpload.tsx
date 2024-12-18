@@ -36,8 +36,6 @@ const FileUpload = ({ onUpload }: FileUploadProps) => {
 
       if (response.ok) {
         const fileInfo = await response.json();
-
-        console.log('response', await fileInfo);
         setUploadStatus('OK');
 
         if (onUpload) {

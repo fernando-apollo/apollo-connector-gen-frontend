@@ -10,11 +10,19 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:8080';
 
+type CheckedProps = {
+  checked: Key[];
+  halfChecked: Key[];
+};
+
 export const useAppState = () => {
   const [uploadInfo, setUploadInfo] = useState<UploadInfo | null>(null);
   const [treeData, setTreeData] = useState<TreeData>([]);
   const [generated, setGenerated] = useState<string | undefined>('');
-  const [checkedKeys, setCheckedKeys] = useState<Key[]>([]);
+  const [checkedKeys, setCheckedKeys] = useState<CheckedProps>({
+    checked: [],
+    halfChecked: [],
+  });
 
   // TODO: Do we want to persist these in our local storage?
   // const inputEditor = useMonacoEditor({
@@ -22,12 +30,27 @@ export const useAppState = () => {
   // });
 
   // const inputModel = useEditorModel(inputEditor);
-  const onCheck = (checked: Key[], info: CheckInfo<TreeDataType>): void => {
-    console.log('onCheck', checked, info);
-    setCheckedKeys([
-      ...info.checkedNodes.map((n) => n.key),
-      ...info.halfCheckedKeys,
-    ]);
+  const onCheck = (
+    values: CheckedProps,
+    info: CheckInfo<TreeDataType>
+  ): void => {
+    const set = new Set<string>();
+
+    // add all the parent nodes from the checked nodes
+    // needed for the backend to generate the answers
+    values.checked
+      .map((p) => findNode(treeData, p as string))
+      .forEach((n: Node | undefined) => {
+        let p = n;
+        while ((p = p?.parent)) {
+          set.add(p.key);
+        }
+      });
+
+    setCheckedKeys({
+      checked: [...values.checked, ...set],
+      halfChecked: values.halfChecked,
+    });
   };
 
   const generateAnswers = (
@@ -38,7 +61,6 @@ export const useAppState = () => {
     treeData.forEach((r) => {
       const key = r.key.replaceAll('#/components/schemas', '#/c/s');
       const id = r.key.substring(r.key.lastIndexOf('>') + 1);
-      // console.log('r', id);
 
       if (checkedKeys.includes(r.key)) {
         if (id.startsWith('obj:') || id.startsWith('comp:')) {
@@ -81,12 +103,8 @@ export const useAppState = () => {
   };
 
   const onLoadData = async ({ title, key, isLeaf }: Node) => {
-    console.log('load data...', key);
-
     const newTreeData: TreeData = [...treeData];
-
     const root = findNode(newTreeData, key);
-    console.log('root', root);
 
     let url = '';
     if (!root!.parent) {
@@ -121,7 +139,6 @@ export const useAppState = () => {
         }
       });
 
-      console.log('newTreeData', newTreeData);
       setTreeData(newTreeData);
     }
   };
@@ -133,14 +150,12 @@ export const useAppState = () => {
     if (isScalar) return item.name + ': ' + item.value;
 
     const isRef = item.id.startsWith('ref:') || item.id.startsWith('prop:ref');
-    // const isObject = item.id.startsWith('obj:');
     if (isRef) return 'ref: ' + item.name;
 
     const isArray =
       item.id.startsWith('array:') || item.id.startsWith('prop:array:');
 
     if (isArray) {
-      console.log('isArray', item.id);
       return '[' + item.id.replace('prop:array:', '') + ']';
     }
 
@@ -158,18 +173,17 @@ export const useAppState = () => {
       title: formatTitle(item),
       key: item.path, // (root?.key || '<root>') + '>' + item.id,
       isLeaf: isScalar,
-      // disableCheckbox: !isScalar,
+      disableCheckbox: !isScalar,
       parent: root,
     };
 
-    console.log('result', result);
     return result;
   };
 
   const onGenerateAnswers = async () => {
     setGenerated(undefined);
     const answers: Answers = {};
-    generateAnswers(treeData, checkedKeys, answers);
+    generateAnswers(treeData, checkedKeys.checked, answers);
 
     console.log('generate', JSON.stringify(answers, null, 2));
 
@@ -182,6 +196,7 @@ export const useAppState = () => {
         },
       }
     );
+
     if (response.status === 200) {
       console.log('response', response.data);
       return response.data.result;
@@ -212,6 +227,7 @@ export const useAppState = () => {
     generated,
     setGenerated,
     checkedKeys,
+    setCheckedKeys,
     generateAnswers,
     onGenerateAnswers,
     checkCheckedKeys,
