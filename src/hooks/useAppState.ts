@@ -23,6 +23,7 @@ export const useAppState = () => {
     checked: [],
     halfChecked: [],
   });
+  const [loadedKeys, setLoadedKeys] = useState<Key[]>([]);
 
   // TODO: Do we want to persist these in our local storage?
   // const inputEditor = useMonacoEditor({
@@ -30,10 +31,7 @@ export const useAppState = () => {
   // });
 
   // const inputModel = useEditorModel(inputEditor);
-  const onCheck = (
-    values: CheckedProps,
-    info: CheckInfo<TreeDataType>
-  ): void => {
+  const onCheck = (values: CheckedProps): void => {
     const set = new Set<string>();
 
     // add all the parent nodes from the checked nodes
@@ -217,6 +215,29 @@ export const useAppState = () => {
     return false;
   };
 
+  const getId = (key: string) => key.substring(key.lastIndexOf('>') + 1);
+
+  const selectAllScalars = (event: any, node: any) => {
+    console.log('right click', event, node);
+    const n = findNode(treeData, event.node.key);
+    if (!n) return;
+
+    const id = n.key.substring(n.key.lastIndexOf('>') + 1);
+
+    if (id.startsWith('obj:')) {
+      const keys: Key[] = n
+        .children!.filter((n: Node) =>
+          getId(n.key as string).startsWith('prop:scalar')
+        )
+        .map((c) => c.key);
+
+      onCheck({
+        checked: [...checkedKeys?.checked, ...keys],
+        halfChecked: checkedKeys.halfChecked,
+      });
+    }
+  };
+
   return {
     uploadInfo,
     setUploadInfo,
@@ -228,8 +249,11 @@ export const useAppState = () => {
     setGenerated,
     checkedKeys,
     setCheckedKeys,
+    loadedKeys,
+    setLoadedKeys,
     generateAnswers,
     onGenerateAnswers,
     checkCheckedKeys,
+    selectAllScalars,
   };
 };

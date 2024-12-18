@@ -28,9 +28,13 @@ function App() {
     onLoadData,
     onCheck,
     checkedKeys,
+    setCheckedKeys,
+    loadedKeys,
+    setLoadedKeys,
     onGenerateAnswers,
     setGenerated,
     checkCheckedKeys,
+    selectAllScalars,
   } = useAppState();
   const treeRef = useRef<any>();
 
@@ -65,6 +69,11 @@ function App() {
                   onUpload={(info: UploadInfo): void => {
                     setUploadInfo(info);
                     setTreeData([]);
+                    setCheckedKeys({ checked: [], halfChecked: [] });
+                    setLoadedKeys([]);
+
+                    // const r = treeRef.current;
+                    // debugger;
 
                     const data = info.paths.map((path) => ({
                       title: path,
@@ -104,7 +113,13 @@ function App() {
                 loadData={onLoadData}
                 onCheck={onCheck}
                 checkStrictly={true}
+                expandAction='click'
+                showLine={true}
                 icon={(props: TreeNodeProps) => getIconFor(props)}
+                onRightClick={selectAllScalars}
+                // expandedKeys={expandedKeys}
+                // onExpand={(keys) => setExpandedKeys(keys)}
+                loadedKeys={loadedKeys}
               />
             )}
           </Panel>
