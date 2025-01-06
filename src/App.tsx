@@ -104,23 +104,25 @@ function App() {
               </Button>
             </div>
             {treeData && (
-              <Tree
-                ref={treeRef}
-                treeData={treeData}
-                checkable
-                checkedKeys={checkedKeys}
-                selectable={false}
-                loadData={onLoadData}
-                onCheck={onCheck}
-                checkStrictly={true}
-                expandAction='click'
-                showLine={true}
-                icon={(props: TreeNodeProps) => getIconFor(props)}
-                onRightClick={selectAllScalars}
-                // expandedKeys={expandedKeys}
-                // onExpand={(keys) => setExpandedKeys(keys)}
-                loadedKeys={loadedKeys}
-              />
+              <div style={{ height: '100%', overflow: 'auto' }}>
+                <Tree
+                  ref={treeRef}
+                  treeData={treeData}
+                  checkable
+                  checkedKeys={checkedKeys}
+                  selectable={false}
+                  loadData={onLoadData}
+                  onCheck={onCheck}
+                  checkStrictly={true}
+                  expandAction='click'
+                  showLine={true}
+                  icon={(props: TreeNodeProps) => getIconFor(props)}
+                  onRightClick={selectAllScalars}
+                  // expandedKeys={expandedKeys}
+                  // onExpand={(keys) => setExpandedKeys(keys)}
+                  loadedKeys={loadedKeys}
+                />
+              </div>
             )}
           </Panel>
         </Allotment.Pane>

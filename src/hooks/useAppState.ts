@@ -61,7 +61,11 @@ export const useAppState = () => {
       const id = r.key.substring(r.key.lastIndexOf('>') + 1);
 
       if (checkedKeys.includes(r.key)) {
-        if (id.startsWith('obj:') || id.startsWith('comp:')) {
+        if (
+          id.startsWith('obj:') ||
+          id.startsWith('comp:') ||
+          id.startsWith('union:')
+        ) {
           answers[key] = 's';
         } else {
           //if (!id.startsWith('ref:') && !id.startsWith('prop:ref:')) {
@@ -100,7 +104,7 @@ export const useAppState = () => {
     }
   };
 
-  const onLoadData = async ({ title, key, isLeaf }: Node) => {
+  const onLoadData = async ({ key }: Node) => {
     const newTreeData: TreeData = [...treeData];
     const root = findNode(newTreeData, key);
 
@@ -124,21 +128,25 @@ export const useAppState = () => {
         ? response.data.result
         : [response.data.result];
 
-      items.forEach((item: ResponseItem, index: number) => {
-        const newNode: Node = createNode(item, root);
+      if (items.length > 0) {
+        items.forEach((item: ResponseItem) => {
+          const newNode: Node = createNode(item, root);
 
-        if (root) {
-          root.isLeaf = false;
-          if (root.children) {
-            root.children.push(newNode);
-          } else {
-            root.children = [newNode];
+          if (root) {
+            root.isLeaf = false;
+            if (root.children) {
+              root.children.push(newNode);
+            } else {
+              root.children = [newNode];
+            }
           }
-        }
-      });
+        });
 
-      setTreeData(newTreeData);
+        setTreeData(newTreeData);
+      }
     }
+    // return true;
+    await undefined;
   };
 
   const formatTitle = (item: ResponseItem): string => {
@@ -224,7 +232,7 @@ export const useAppState = () => {
 
     const id = n.key.substring(n.key.lastIndexOf('>') + 1);
 
-    if (id.startsWith('obj:')) {
+    if (id.startsWith('obj:') || id.startsWith('comp:')) {
       const keys: Key[] = n
         .children!.filter((n: Node) =>
           getId(n.key as string).startsWith('prop:scalar')
