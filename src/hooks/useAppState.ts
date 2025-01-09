@@ -173,13 +173,14 @@ export const useAppState = () => {
   };
 
   const createNode = (item: ResponseItem, root: Node | undefined): Node => {
-    const isScalar = item.id.startsWith('prop:scalar');
+    const isScalarOrEnum =
+      item.id.startsWith('prop:scalar') || item.id.startsWith('enum:');
 
     const result = {
       title: formatTitle(item),
       key: item.path, // (root?.key || '<root>') + '>' + item.id,
-      isLeaf: isScalar,
-      disableCheckbox: !isScalar,
+      isLeaf: isScalarOrEnum,
+      disableCheckbox: !isScalarOrEnum,
       parent: root,
     };
 
@@ -234,7 +235,7 @@ export const useAppState = () => {
 
     if (id.startsWith('obj:') || id.startsWith('comp:')) {
       const keys: Key[] = n
-        .children!.filter((n: Node) =>
+        .children?.filter((n: Node) =>
           getId(n.key as string).startsWith('prop:scalar')
         )
         .map((c) => c.key);
