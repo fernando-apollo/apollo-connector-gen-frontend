@@ -1,12 +1,9 @@
 import { Key, useState } from 'react';
 
 import { Answers, Node, ResponseItem, TreeData, UploadInfo } from 'types/utils';
-import { CheckInfo } from 'rc-tree/lib/Tree';
 
 import axios from 'axios';
-
-// export const PlaygroundResultsTabs = ['Obtained', 'Desired'] as const;
-// export type PlaygroundResultsTab = (typeof PlaygroundResultsTabs)[number];
+import { EventDataNode } from 'rc-tree/lib/interface';
 
 const baseUrl = 'http://localhost:8080';
 
@@ -25,30 +22,27 @@ export const useAppState = () => {
   });
   const [loadedKeys, setLoadedKeys] = useState<Key[]>([]);
 
-  // TODO: Do we want to persist these in our local storage?
-  // const inputEditor = useMonacoEditor({
-  //   language: 'json',
-  // });
-
-  // const inputModel = useEditorModel(inputEditor);
-  const onCheck = (values: CheckedProps): void => {
+  const onCheck = (values: Key[] | CheckedProps, _info: any): void => {
     const set = new Set<string>();
 
     // add all the parent nodes from the checked nodes
     // needed for the backend to generate the answers
-    values.checked
-      .map((p) => findNode(treeData, p as string))
-      .forEach((n: Node | undefined) => {
-        let p = n;
-        while ((p = p?.parent)) {
-          set.add(p.key);
-        }
-      });
+    if (typeof values === 'object') {
+      const checkedProps: CheckedProps = values as CheckedProps;
+      checkedProps.checked
+        .map((p) => findNode(treeData, p as string))
+        .forEach((n: Node | undefined) => {
+          let p = n;
+          while ((p = p?.parent)) {
+            set.add(p.key);
+          }
+        });
 
-    setCheckedKeys({
-      checked: [...values.checked, ...set],
-      halfChecked: values.halfChecked,
-    });
+      setCheckedKeys({
+        checked: [...checkedProps.checked, ...set],
+        halfChecked: checkedProps.halfChecked,
+      });
+    }
   };
 
   const generateAnswers = (
@@ -57,7 +51,7 @@ export const useAppState = () => {
     answers: Answers
   ) => {
     treeData.forEach((r) => {
-      const key = r.key.replaceAll('#/components/schemas', '#/c/s');
+      const key: string = r.key.replace(/#\/components\/schemas/g, '#/c/s');
       const id = r.key.substring(r.key.lastIndexOf('>') + 1);
 
       if (checkedKeys.includes(r.key)) {
@@ -68,12 +62,10 @@ export const useAppState = () => {
         ) {
           answers[key] = 's';
         } else {
-          //if (!id.startsWith('ref:') && !id.startsWith('prop:ref:')) {
           answers[key] = 'y';
         }
       } else {
         // do nothing
-        // answers.push('"n" #' + id);
         answers[key] = 'n';
       }
 
@@ -108,19 +100,22 @@ export const useAppState = () => {
     const newTreeData: TreeData = [...treeData];
     const root = findNode(newTreeData, key);
 
-    let url = '';
+    let response;
     if (!root!.parent) {
       // we are in a path
-      url = `${baseUrl}/visit/${uploadInfo!.md5}/path?id=${encodeURIComponent(
-        key
-      )}`;
+      const url = `${baseUrl}/visit/${
+        uploadInfo!.md5
+      }/path?id=${encodeURIComponent(key)}`;
+      response = await axios.get(url);
     } else {
-      url = `${baseUrl}/visit/${uploadInfo!.md5}/type?id=${encodeURIComponent(
-        key
-      )}&p=${encodeURIComponent(root!.parent!.title)}`;
+      const url = `${baseUrl}/visit/${
+        uploadInfo!.md5
+      }/type?&p=${encodeURIComponent(root!.parent!.title)}`;
+
+      const payload = key;
+      response = await axios.post(url, payload);
     }
 
-    const response = await axios.get(url);
     if (response.status === 200) {
       console.log('response', response.data);
 
@@ -178,7 +173,7 @@ export const useAppState = () => {
 
     const result = {
       title: formatTitle(item),
-      key: item.path, // (root?.key || '<root>') + '>' + item.id,
+      key: item.path,
       isLeaf: isScalarOrEnum,
       disableCheckbox: !isScalarOrEnum,
       parent: root,
@@ -193,7 +188,6 @@ export const useAppState = () => {
     generateAnswers(treeData, checkedKeys.checked, answers);
 
     console.log('generate', JSON.stringify(answers, null, 2));
-
     const response = await axios.post(
       `${baseUrl}/visit/${uploadInfo!.md5}/generate`,
       answers,
@@ -220,30 +214,33 @@ export const useAppState = () => {
       }
     }
 
-    // debugger;
     return false;
   };
 
   const getId = (key: string) => key.substring(key.lastIndexOf('>') + 1);
 
-  const selectAllScalars = (event: any, node: any) => {
-    console.log('right click', event, node);
-    const n = findNode(treeData, event.node.key);
+  const selectAllScalars = (info: {
+    event: React.MouseEvent;
+    node: EventDataNode<Node>;
+  }) => {
+    console.log('right click', info.event, info.node);
+    const n = findNode(treeData, info.node.key);
     if (!n) return;
 
     const id = n.key.substring(n.key.lastIndexOf('>') + 1);
 
     if (id.startsWith('obj:') || id.startsWith('comp:')) {
-      const keys: Key[] = n
-        .children?.filter((n: Node) =>
-          getId(n.key as string).startsWith('prop:scalar')
-        )
+      const keys: Key[] | undefined = n.children
+        ?.filter((n: Node) => getId(n.key as string).startsWith('prop:scalar'))
         .map((c) => c.key);
 
-      onCheck({
-        checked: [...checkedKeys?.checked, ...keys],
-        halfChecked: checkedKeys.halfChecked,
-      });
+      onCheck(
+        {
+          checked: [...checkedKeys?.checked, ...keys!],
+          halfChecked: checkedKeys.halfChecked,
+        },
+        {}
+      );
     }
   };
 

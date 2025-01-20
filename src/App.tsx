@@ -118,8 +118,6 @@ function App() {
                   showLine={true}
                   icon={(props: TreeNodeProps) => getIconFor(props)}
                   onRightClick={selectAllScalars}
-                  // expandedKeys={expandedKeys}
-                  // onExpand={(keys) => setExpandedKeys(keys)}
                   loadedKeys={loadedKeys}
                 />
               </div>

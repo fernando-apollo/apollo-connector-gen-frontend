@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@components/themeProvider/ThemeProvider.tsx';
 import * as Tooltip from '@radix-ui/react-tooltip';
 import EventEmitter from 'eventemitter3';
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import * as WebFont from 'webfontloader';
 

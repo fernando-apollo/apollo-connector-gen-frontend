@@ -2,12 +2,10 @@ import IconMoon from '@apollo/icons/default/IconMoon.svg?react';
 import IconSun from '@apollo/icons/default/IconSun.svg?react';
 import ApolloLogo from '@apollo/icons/logos/LogoSymbol.svg?react';
 import { Button } from '@components/Button';
-import { Select } from '@components/Select';
 import {
   ThemeName,
   useThemeContext,
 } from '@components/themeProvider/ThemeProvider';
-import { useCallback } from 'react';
 import useLocalStorage from 'use-local-storage';
 
 export const GlobalHeader = () => {
@@ -15,7 +13,7 @@ export const GlobalHeader = () => {
     'persistedThemeName',
     ThemeName.LIGHT
   );
-  const { themeName, containerRef } = useThemeContext();
+  const { themeName } = useThemeContext();
 
   return (
     <header
