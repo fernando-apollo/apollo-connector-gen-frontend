@@ -1,2 +1,2 @@
 build-docker:
-	docker build -t apollographql/connector-gen-frontend .
+	docker build --no-cache -t apollographql/connector-gen-frontend .

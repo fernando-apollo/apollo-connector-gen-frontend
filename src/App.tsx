@@ -72,9 +72,6 @@ function App() {
                     setCheckedKeys({ checked: [], halfChecked: [] });
                     setLoadedKeys([]);
 
-                    // const r = treeRef.current;
-                    // debugger;
-
                     const data = info.paths.map((path) => ({
                       title: path,
                       key: 'get:' + path,
@@ -104,7 +101,7 @@ function App() {
               </Button>
             </div>
             {treeData && (
-              <div style={{ height: '100%', overflow: 'auto' }}>
+              <div style={{ height: 'calc(100% - 50px)', overflow: 'scroll' }}>
                 <Tree
                   ref={treeRef}
                   treeData={treeData}

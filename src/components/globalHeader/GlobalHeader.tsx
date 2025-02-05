@@ -24,7 +24,7 @@ export const GlobalHeader = () => {
         <div className='flex items-center'>
           <ApolloLogo className='size-8 text-heading mr-4' />
           <h1 className='text-xl truncate font-medium font-heading text-heading'>
-            Apollo Connector Generator
+            Apollo Connector Generator (05-Feb-2025)
           </h1>
         </div>
         <div className='flex items-center space-x-2'>

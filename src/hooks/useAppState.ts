@@ -5,7 +5,7 @@ import { Answers, Node, ResponseItem, TreeData, UploadInfo } from 'types/utils';
 import axios from 'axios';
 import { EventDataNode } from 'rc-tree/lib/interface';
 
-const baseUrl = 'http://localhost:8080';
+const baseUrl = import.meta.env.BACKEND_URL || 'http://localhost:8080';
 
 type CheckedProps = {
   checked: Key[];
